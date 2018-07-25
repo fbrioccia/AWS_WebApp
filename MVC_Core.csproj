@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.8" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.4" />
+  </ItemGroup>
+
+<ItemGroup>
+  <Reference Include="MongoDB.Driver">
+    <HintPath>MongoDB.Driver.dll</HintPath>
+  </Reference>
+</ItemGroup>
+
+<ItemGroup>
+  <Reference Include="MongoDB.Driver.Core">
+    <HintPath>MongoDB.Driver.Core.dll</HintPath>
+  </Reference>
+</ItemGroup>
+
+<ItemGroup>
+  <Reference Include="MongoDB.Bson">
+    <HintPath>MongoDB.Bson.dll</HintPath>
+  </Reference>
+</ItemGroup>
+
+
+
+
+</Project>
