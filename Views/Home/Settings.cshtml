@@ -3,3 +3,518 @@
 }
 
 <h1>Settings</h1>
+
+
+<h3>Weather - [Cagliari]</h3>
+<div>
+     <table class="table">
+        <thead>
+    <tr>
+
+      <th scope="col">Weather</th>
+      <th scope="col">Temperature</th>
+      <th scope="col">Wind</th>
+      <th scope="col">Humidity</th>
+      <th scope="col"></th>
+    </tr>
+  </thead>
+<tbody>
+     <tr>
+      <td>    
+           <img id="img_icon" title="N\A" src="https://developer.accuweather.com/sites/default/files/40-s.png"/>
+          <p id="p_weather"></p>
+       <td>   
+             <p id="p_temperature">N\A</p>
+       </td>
+        <td>
+              <p id="p_wind">N\A km/h </p>
+       </td>
+       <td>
+              <p id="p_humidity">N\A</p>
+       </td>
+       <td>
+            <button onclick="weatherUpdate()" type="button" class="btn btn-light">Update</button>
+       </td>
+    </tr>
+    </tr>
+   
+  </tbody>
+  </table>
+</div>
+
+<h3>Weather - Forecast 24h - [Cagliari]</h3>
+<p id="p_day_forecast"></p>
+<div>
+     <table class="table">
+        <thead>
+    <tr>
+
+      <th scope="col">Weather</th>
+      <th scope="col">Temperature Min</th>
+      <th scope="col">Temperature Max</th>
+      <th scope="col">Wind</th>
+
+      <th scope="col">Hours Of Rain</th>
+
+      <th scope="col">Cloud Cover</th>
+      <th scope="col"></th>
+    </tr>
+  </thead>
+<tbody>
+     <tr>
+      <td>    
+          <img id="img_icon_f" src="https://developer.accuweather.com/sites/default/files/40-s.png" title="N\A"/>
+          <p id="p_f_weather"></p>
+       <td>   
+             <p id="p_f_temperature_min">N\A</p>
+       </td>
+       <td>   
+             <p id="p_f_temperature_max">N\A</p>
+       </td>
+        <td>
+              <p id="p_f_wind">N\A km/h </p>
+       </td>
+
+       <td>
+              <p id="p_f_hours_rain">N\A</p>
+       </td>
+
+       <td>
+              <p id="p_f_cloud_cover">N\A</p>
+       </td>
+       
+       <td>
+            <button onclick="weatherSingleDayForecast()" type="button" class="btn btn-light">Update</button>
+       </td>
+    </tr>
+    </tr>
+   
+  </tbody>
+  </table>
+</div>
+
+<h3>Policy - Awake/Sleep loop</h3>
+    <table class="table">
+        <thead>
+    <tr>
+     
+       <th scope="col">On</th>
+      <th scope="col">Sleep</th>
+    </tr>
+  </thead>
+<tbody>
+
+    <tr>
+      <td>    <input type="checkbox" class="form-check-input" id="awakeSleepLoop_checkBox">
+    
+       <!-- <td>   
+              <input type="text" id="tot_awake" />
+       </td> -->
+        <td>
+              <input type="text" id="tot_sleep" />
+       </td>
+    </tr>
+    
+</tbody>
+
+
+</table>
+
+<h3>Policy - Measurements</h3>
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Policy</th>
+      <th scope="col">Measurement</th>
+      <th scope="col">Operator</th>
+      <th scope="col">Value</th>
+      <th scope="col">Time</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">1</th>
+      <td>Watering</td>
+       <td>
+
+      <select>
+              <option value="0">-</option>
+          </select>
+       </td>
+        <td>
+
+       <select>
+              <option value="0">-</option>
+          </select>
+        </td>
+      <td></td>
+      <td><input type="text" id="watering_time" style="width:100px;"/></td>
+    </tr>
+    <tr>
+      <th scope="row">2</th>
+      <td>Watering (Condition)</td>
+       <td>
+
+      <select>
+              <option value="1">Light</option><option value="2">Soil Moisture</option><option value="3">Temperature</option>
+          </select>
+       </td>
+        <td>
+
+       <select>
+              <option value="-1">≤</option>
+              <option value="1">≥</option>
+          </select>
+        </td>
+      <td><input type="text" id="watering_value" style="width:100px;"/></td>
+      <td><input type="text" id="watering_time" style="width:100px;"/></td>
+    </tr>
+    <!-- <tr>
+      <th scope="row">2</th>
+      <td>Light</td>
+      <td>
+          <select>
+              <option value="0">Humidity</option><option value="2">Soil Moisture</option><option value="3">Temperature</option>
+          </select>
+      </td>
+       <td>
+
+       <select>
+              <option value="-1">≤</option>
+              <option value="1">≥</option>
+          </select>
+       </td>
+      <td><input type="text" id="light_value" style="width:100px;"/></td></td>
+    </tr>
+    <tr>
+      <th scope="row">3</th>
+      <td>Soil Moisture</td>
+      <td>
+           <select>
+              <option value="0">Humidity</option><option value="1">Light</option><option value="3">Temperature</option>
+          </select>
+      </td>
+       <td>
+
+       <select>
+              <option value="-1">≤</option>
+              <option value="1">≥</option>
+          </select>
+       </td>
+      <td><input type="text" id="sm_value" style="width:100px;"/></td></td>
+    </tr>
+    <tr>
+      <th scope="row">4</th>
+      <td>Temperature</td>
+      <td>
+         <select>
+              <option value="0">Humidity</option><option value="1">Light</option><option value="2">Soil Moisture</option>
+          </select>
+      </td>
+       <td>
+
+       <select>
+              <option value="-1">≤</option>
+              <option value="1">≥</option>
+          </select>
+       </td>
+      <td><input type="text" id="temp_value" style="width:100px;"/></td></td>
+    </tr> -->
+   
+  </tbody>
+</table>
+    <h3>Policy - Actions</h3>
+    <table class="table">
+        <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Policy</th>
+      <th scope="col">Value</th>
+    </tr>
+  </thead>
+<tbody>
+
+    <tr>
+      <th scope="row">1</th>
+      <td>Measure & Send data On Awake</td>
+       <td>
+    <div class="select_sendAwake">
+        <select>
+              <option value="0">Off</option>
+              <option value="1">On</option>
+          </select>
+       </td>
+    </div>
+        <td>
+    </tr>
+    <tr>
+      <th scope="row">2</th>
+      <td>Send data On Measurement</td>
+       <td>
+
+           <div class="select_sendMeasurement">
+
+        <select>
+              <option value="0">Off</option>
+              <option value="1">On</option>
+          </select>
+           </div>
+       </td>
+        <td>
+    </tr>
+     <tr>
+      <th scope="row">3</th>
+      <td>Measure data after interval (Hours)</td>
+       
+
+       <td><input type="text" id="hours_interval" style="width:100px;"></td>
+       </td>
+       
+    </tr>
+</tbody>
+</table>
+
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModal">
+Save</button>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel"> Choose which features send to the server:</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <table class="table">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Include</th>
+      <th scope="col">Feature</th>
+
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">1</th>
+      <td><input type="checkbox" class="form-check-input" id="sleep_loop_checkBox"></td>
+      <td>Policy - Awake/Sleep loop</td>
+    </tr>
+    <tr>
+      <th scope="row">2</th>
+      <td><input type="checkbox" class="form-check-input" id="watering_checkBox"></td>
+      <td>Policy - Measurements: Watering (Simple)</td>
+    </tr><tr>
+      <th scope="row">3</th>
+      <td><input type="checkbox" class="form-check-input" id="watering_condition_checkBox"></td>
+      <td>Policy - Measurements: Watering (Condition)</td>
+    </tr><tr>
+      <th scope="row">4</th>
+      <td><input type="checkbox" class="form-check-input" id="measure_send_on_awake_checkBox"></td>
+      <td>Policy - Actions: Measure & Send data On Awake</td>
+    </tr><tr>
+      <th scope="row">5</th>
+      <td><input type="checkbox" class="form-check-input" id="send_on_measurement_checkBox"></td>
+      <td>Policy - Actions: Send data On Measurement</td>
+    </tr><tr>
+      <th scope="row">6</th>
+      <td><input type="checkbox" class="form-check-input" id="measure_interval_checkBox"></td>
+      <td>Policy - Actions: Measure data after interval (Hours)</td>
+    </tr>
+  </tbody>
+</table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="update_shadow_button"> Send to server</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script type="text/javascript">
+    window.onload = function(){
+        window._default_values = {}
+        window._default_values.sleepTime = null;
+        window._default_values.awakeSleepLoop = null;
+        window._default_values.waterTime = null;
+        window._default_values.sendOnAwake = null;
+        window._default_values.sendOnMeasure = null;
+        window._default_values.measureInterval = null;
+        window._default_values.wateringCondition = {}
+        window._default_values.wateringCondition.measurament = null;
+        window._default_values.wateringCondition.operator = null;
+        window._default_values.wateringCondition.value = null;
+        window._default_values.wateringCondition.time = null;
+
+        window._current_values = {}
+        window._current_values.sleepTime = null;
+        window._current_values.awakeSleepLoop = null;
+        window._current_values.waterTime = null;
+        window._current_values.sendOnAwake = null;
+        window._current_values.sendOnMeasure = null;
+        window._current_values.measureInterval = null;
+        window._current_values.wateringCondition = {}
+        window._current_values.wateringCondition.measurament = null;
+        window._current_values.wateringCondition.operator = null;
+        window._current_values.wateringCondition.value = null;
+        window._current_values.wateringCondition.time = null;
+
+        $('#tot_sleep').on('input', function() {
+            debugger;
+            window._current_values.sleepTime = $(this).val();
+            $('#sleep_loop_checkBox').prop('checked', window._current_values.sleepTime != window._default_values.sleepTime);
+        });
+
+        $('#watering_time').on('input', function() {
+            debugger;
+            window._current_values.waterTime = $(this).val();
+            $('#watering_checkBox').prop('checked', window._current_values.waterTime != window._default_values.waterTime);
+        });
+
+        $.ajax({
+                    type: 'GET',
+                    url: '@Url.Action("GetShadow")',
+                    data:{
+                        "deviceId": ""
+                    },
+                    dataType: 'json',
+                    success: function (data) {
+                        var jsonData = JSON.parse(data);
+
+                        window._default_values.sleepTime = jsonData.state.desired.SleepTime || jsonData.state.reported.SleepTime || 0;
+                        window._default_values.awakeSleepLoop = jsonData.state.desired.on || jsonData.state.reported.on  || false;
+                        window._default_values.waterTime = jsonData.state.desired.waterTime || jsonData.state.reported.waterTime || 0;
+
+                        //var sendDataOnMeasurements = jsonData.state.desired.state.send_data_on_measurements;
+                        //var sendDataOnAwake = jsonData.state.desired.state.send_data_on_awake
+                        //var sendDataInterval = jsonData.state.desired.state.send_data_on_hours_interval;
+                        //var awakeTime = jsonData.state.desired.state.awake_time;
+                        //var sleepTime = jsonData.state.desired.state.sleep_time;
+                        
+                        $('#tot_sleep').val(window._default_values.sleepTime);
+                        $('#watering_time').val(window._default_values.waterTime);
+                        $('#awakeSleepLoop_checkBox').prop('checked', window._default_values.awakeSleepLoop);
+                        // $('#hours_interval').val(sendDataInterval);
+                        // (sendDataOnAwake)? $('div.select_sendAwake select').val("1") : $('div.select_sendAwake select').val("0");
+                        // (sendDataOnMeasurements)? $('div.select_sendMeasurement select').val("1") : $('div.select_sendMeasurement select').val("0");
+
+
+                        debugger;
+                    },
+                    error: function (emp) {
+                        debugger;
+                    }
+                });
+
+        $( "#update_shadow_button" ).click(function() {
+            debugger;
+            var shadowContent = [];
+            if($('#sleep_loop_checkBox').prop('checked'))
+                shadowContent.push('"SleepTime": '+window._current_values.sleepTime);
+
+            if($('#watering_checkBox').prop('checked'))
+                shadowContent.push('"waterTime": '+window._current_values.waterTime);
+
+            $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("UpdateShadow")',
+                    data:{
+                        "deviceId": "",
+                        "jsonContent" : shadowContent
+                    },
+                    dataType: 'json',
+                    success: function (data) {
+                        $('#exampleModal').modal('hide');
+                        debugger;
+                    },
+                    error: function (emp) {
+                         $('#exampleModal').modal('hide');
+                        debugger;
+                    }
+                });
+        });
+    }
+
+    var pad = function(str, max) {
+        str = str.toString();
+        return str.length < max ? pad("0" + str, max) : str;
+    }
+
+
+
+    var weatherSingleDayForecast = function(){
+        $.ajax({
+	    url:"http://dataservice.accuweather.com/forecasts/v1/daily/1day/215279?apikey=bWtMnCqWnjA2SjPldo28jpzbtXcAIf0N&language=en&details=true&metric=true",
+	    type:"GET",
+        success:function(result)
+        {
+            debugger;
+            var textForecast = result.Headline.Text;
+            var tempUnitMin = result.DailyForecasts[0].Temperature.Minimum.Unit;
+            var tempValueMin = result.DailyForecasts[0].Temperature.Minimum.Value;
+            var tempUnitMax = result.DailyForecasts[0].Temperature.Maximum.Unit;
+            var tempValueMax = result.DailyForecasts[0].Temperature.Maximum.Value;
+            var weatherText = result.DailyForecasts[0].Day.LongPhrase;
+            var weatherIcon = result.DailyForecasts[0].Day.Icon;
+            var windDirection = result.DailyForecasts[0].Day.Wind.Direction.Localized;
+            var windUnit = result.DailyForecasts[0].Day.Wind.Speed.Unit;
+            var windValue = result.DailyForecasts[0].Day.Wind.Speed.Value;
+            var cloudCoverPercent = result.DailyForecasts[0].Day.CloudCover;
+            var hoursOfRain = result.DailyForecasts[0].Day.HoursOfRain;
+
+            $("#p_day_forecast").text(textForecast);
+            $("#p_f_temperature_min").text(tempValueMin +' '+tempUnitMin);
+            $("#p_f_temperature_max").text(tempValueMax +' '+tempUnitMax);
+            $("#p_f_wind").text(windValue+' '+windUnit+' dir: '+windDirection);
+            $("#p_f_hours_rain").text(hoursOfRain);
+            $("#p_f_cloud_cover").text(cloudCoverPercent+'%');
+            $('#img_icon_f').attr('src',"https://developer.accuweather.com/sites/default/files/"+pad(weatherIcon,2)+"-s.png");
+            $('#img_icon_f').attr('title',weatherText);
+        },
+        error:function(error)
+        {
+            debugger;
+        }
+    });
+   };
+    
+
+   var weatherUpdate = function(){
+       debugger;
+       $.ajax({
+	    url:"http://dataservice.accuweather.com/currentconditions/v1/215279?apikey=bWtMnCqWnjA2SjPldo28jpzbtXcAIf0N&language=en&details=true",
+	    type:"GET",
+        success:function(result)
+        {
+            debugger;
+            var tempUnit = result[0].ApparentTemperature.Metric.Unit;
+            var tempValue = result[0].ApparentTemperature.Metric.Value;
+            var weatherText = result[0].WeatherText;
+            var weatherIcon = result[0].WeatherIcon;
+            var windDirection = result[0].Wind.Direction.Localized;
+            var windUnit = result[0].Wind.Speed.Metric.Unit;
+            var windValue = result[0].Wind.Speed.Metric.Value;
+            var humidityValue = result[0].RelativeHumidity;
+
+
+            //$("#p_weather").text(weatherText);
+            $("#p_temperature").text(tempValue +' '+tempUnit);
+            $("#p_wind").text(windValue+' '+windUnit+' dir: '+windDirection);
+            $("#p_humidity").text(humidityValue);
+            $('#img_icon').attr('src',"https://developer.accuweather.com/sites/default/files/"+pad(weatherIcon,2)+"-s.png");
+            $('#img_icon').attr('title',weatherText);
+        },
+        error:function(error)
+        {
+            debugger;
+        }
+    });
+   };
+</script>

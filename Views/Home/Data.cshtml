@@ -1,5 +1,627 @@
 @{
     ViewData["Title"] = "Data";
+    dataPoints: @Html.Raw(ViewBag.DataPoints);
+}
+@section Scripts
+{ 
+    <script src="@Url.Content("https://canvasjs.com/assets/script/canvasjs.min.js")"></script>
+    <script src="@Url.Content("https://code.jquery.com/ui/1.12.0/jquery-ui.min.js")"></script>
+    <script src="@Url.Content("https://cdn.anychart.com/releases/v8/js/anychart-base.min.js")"></script>
 }
 
+
 <h1>Data</h1>
+
+
+
+<div class="container">
+  
+  <div class="row" style="margin-bottom:25px;">
+    <div class="col-sm-4">
+         <div class="dropdown" id="dropdown_id">
+  <button style="width:160px;" id="dropdown_id_button" class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Select Device
+  <span id="dropdown_id_span" class="caret"></span></button>
+  <ul class="dropdown-menu">
+      @foreach (var item in Model)
+        {
+            <li><a>@item.device_id</a></li>
+        }
+  </ul>
+  </div> 
+
+    </div>    
+    </div>       
+
+<!-- Columns start at 50% wide on mobile and bump up to 33.3% wide on desktop -->
+<div class="row">
+  <div class="col-4 col-md-3" style="height:300px;display: flex;align-items: center;">
+       <div class="col-2 col-md-2" style="width:200px;" >
+            <h3>Soil Moisture</h3>     
+            <div class="row">
+                 <div class="col-6 col-md-6">
+        From: <input style="width:90px;" id="from_date_sm" type="text" class="datepicker">
+      
+  </div>
+
+  <div class="col-6 col-md-6">
+        To: <input style="width:90px;" id="to_date_sm" type="text" class="datepicker">
+      
+  </div>
+  </div>
+</div>
+      </div>
+    
+
+  <div class="col-8 col-md-8">
+      <div id="soilMoistureLine" style="width:100%; height:300px;"></div>
+  </div>
+</div>
+
+<div class="row">
+<!-- Columns start at 50% wide on mobile and bump up to 33.3% wide on desktop -->
+<div class="row">
+  <div class="col-4 col-md-3" style="height:300px;display: flex;align-items: center;">
+         <div class="col-2 col-md-2" style="width:200px;" >
+
+      <h3>Temperature</h3>
+          <div class="row">
+  <div class="col-6 col-md-6">
+        From: <input style="width:90px;" id="from_date_tmp" type="text" class="datepicker">
+      
+  </div>
+ 
+  <div class="col-6 col-md-6">
+        To: <input style="width:90px;" id="to_date_tmp" type="text" class="datepicker">
+      
+    </div>
+  </div>
+</div>
+      </div>
+  <div class="col-8 col-md-8">
+      <div id="temperatureLine" style="width:100%; height:300px;"></div>
+  </div>
+</div>
+
+
+<!-- Columns start at 50% wide on mobile and bump up to 33.3% wide on desktop -->
+<div class="row">
+  <div class="col-4 col-md-3" style="height:300px;display: flex;align-items: center;">
+        <div class="col-2 col-md-2" style="width:200px;" >
+            <h3>Humidity</h3>
+            <div class="row">
+            <div class="col-6 col-md-6">
+        From: <input style="width:90px;" id="from_date_hm" type="text" class="datepicker">
+      
+  </div>
+
+  <div class="col-6 col-md-6">
+        To: <input style="width:90px;" id="to_date_hm" type="text" class="datepicker">
+      
+    </div>
+  </div>
+</div>
+      </div>
+  <div class="col-8 col-md-8">
+      <div id="humidityLine" style="width:100%; height:300px;"></div>
+  </div>
+</div>
+
+<div class="row">
+<!-- Columns start at 50% wide on mobile and bump up to 33.3% wide on desktop -->
+<div class="row">
+  <div class="col-4 col-md-3" style="height:300px;display: flex;align-items: center;">
+         <div class="col-2 col-md-2" style="width:200px;" >
+      <h3>Light</h3>
+      
+    <div class="row">
+  <div class="col-6 col-md-6">
+        From: <input style="width:90px;" id="from_date_ltg" type="text" class="datepicker">
+      
+  </div>
+
+  <div class="col-6 col-md-6">
+            To: <input style="width:90px;" id="to_date_ltg" type="text" class="datepicker">
+
+  </div>
+  </div>
+</div>
+      </div>
+  <div class="col-8 col-md-8">
+      <div id="lightLine" style="width:100%; height:300px;"></div>
+  </div>
+</div>
+
+
+<br/>
+<br/>
+<br/>
+    <script src="../../wwwroot/js/data.js" type="text/javascript"></script>
+    <script type="text/javascript">
+    var soilMoistureLineChart;
+    var soilMoisturePieChart;
+
+    
+    var temperatureLineChart;
+    var lightLineChar;
+    var humidityLineChart;
+     var selectedDeviceId ="";
+     var globalData = null;
+
+                var randomizePie = function()
+{
+    var len = Math.floor(Math.random() * 100); 
+    var data = [];
+    for(var i=0;i<len;i++)
+    {
+        data.push({name: "Point "+i, value: Math.floor(Math.random() * 100),
+        group:(Math.floor(Math.random() * 100 > 50)? 'stock' : 'bonds')});
+    }
+
+    return data;
+}
+
+var randomizeLine = function()
+{
+    
+    // var len = Math.floor(Math.random() * 20)+20; 
+    //   var data = [];
+    // for(var i=0;i<len;i++)
+    // {
+    //     data.push([(i+1999).toString(), Math.floor(Math.random() * 10), Math.floor(Math.random() * 5.5)]);
+    // }
+
+    return [["2008",51,0.2],
+            ["2009",19,4.4],
+            ["2010",21,2],
+            ["2011",22,2],
+            ["2012",23,42],
+            ["2013",17,11],
+            ["2014",13,8],
+            ["2015",12,2],
+            ["2016",14,4],
+            ["2017",13,21],
+            ["2018",11,23]];
+}
+
+    	window.onload = function () {
+
+            var fetchData = function()
+            {
+                
+                var _data = @Html.Raw(ViewBag.DataPoints);
+                for(var i =0; i<_data.length;i++)
+                {
+                _data[i].x = new Date(_data[i].x);
+                }
+                return _data;
+            }
+
+            $(".dropdown-menu li a").click(function(){
+                selectedDeviceId = $(this).text().trim();
+                $(this).parent().parent().parent().children('button').text($(this).text());
+                $(this).parent().parent().parent().children('button').val($(this).text());
+
+                updateHumidity();
+                updateSoilMoisture();
+                updateLight();
+                updateTemperature();
+            });
+
+            $(function () {
+               $( ".datepicker" ).datepicker({ dateFormat: 'dd/mm/yy' });
+            });
+
+            var updateSoilMoisture = function() {
+                debugger;
+                if(selectedDeviceId =="" || document.getElementById('from_date_sm').value == null 
+                || document.getElementById('to_date_sm').value == null)
+                    return;
+
+                $.ajax({
+                    type: 'GET',
+                    url: '@Url.Action("GetSoilMoisture")',
+                    data:{
+                        "deviceId": selectedDeviceId,
+                        "fromDate": document.getElementById('from_date_sm').value,
+                        "toDate": document.getElementById('to_date_sm').value },
+                    dataType: 'json',
+                    success: function (data) {
+                        var newData  = [];
+                        for(var i =0; i<data.length;i++)
+                        {
+                            newData.push([data[i].timestamp,data[i].soil_moisture ]);
+                            
+                        } 
+                        debugger;
+                        soilMoistureLineChart = setLineChart(newData,'','soilMoistureLine');
+                    },
+                    error: function (emp) {
+                        alert('error');
+                    }
+                });
+            }
+
+            var updateHumidity = function(){
+                if(selectedDeviceId =="" || document.getElementById('from_date_hm').value == null 
+                || document.getElementById('to_date_hm').value == null)
+                    return;
+
+                $.ajax({
+                    type: 'GET',
+                    url: '@Url.Action("GetHumidity")',
+                    data:{
+                        "deviceId": selectedDeviceId,
+                        "fromDate": document.getElementById('from_date_hm').value,
+                        "toDate": document.getElementById('to_date_hm').value },
+                    dataType: 'json',
+                    success: function (data) {
+                        var newData  = [];
+                        for(var i =0; i<data.length;i++)
+                        {
+                            newData.push([data[i].timestamp,data[i].humidity ]);
+                            
+                        } 
+                        humidityLineChart = setLineChart(newData,'','humidityLine')
+                    },
+                    error: function (emp) {
+                        alert('error');
+                    }
+                });
+
+            }
+
+
+            var updateTemperature = function() {
+                if(selectedDeviceId =="" || document.getElementById('from_date_tmp').value == null 
+                || document.getElementById('to_date_tmp').value == null)
+                    return;
+
+                $.ajax({
+                    type: 'GET',
+                    url: '@Url.Action("GetTemperature")',
+                    data:{
+                        "deviceId": selectedDeviceId,
+                        "fromDate": document.getElementById('from_date_tmp').value,
+                        "toDate": document.getElementById('to_date_tmp').value },
+                    dataType: 'json',
+                    success: function (data) {
+                        var newData  = [];
+                        for(var i =0; i<data.length;i++)
+                        {
+                            newData.push([data[i].timestamp,data[i].temperature ]);
+                            
+                        } 
+                        debugger;
+                        temperatureLineChart = setLineChart(newData,'','temperatureLine');
+                    },
+                    error: function (emp) {
+                        alert('error');
+                    }
+                });
+            }
+
+            var updateLight = function() {
+                if(selectedDeviceId =="" || document.getElementById('from_date_ltg').value == null 
+                || document.getElementById('to_date_ltg').value == null)
+                    return;
+
+                $.ajax({
+                    type: 'GET',
+                    url: '@Url.Action("GetLightLevels")',
+                    data:{
+                        "deviceId": selectedDeviceId,
+                        "fromDate": document.getElementById('from_date_ltg').value,
+                        "toDate": document.getElementById('to_date_ltg').value },
+                    dataType: 'json',
+                    success: function (data) {
+                          var newData  = [];
+                        for(var i =0; i<data.length;i++)
+                        {
+                            newData.push([data[i].timestamp,data[i].light_level ]);
+                            
+                        } 
+                        debugger;
+                        lightLineChart = setLineChart(newData,'','lightLine');
+                    },
+                    error: function (emp) {
+                        alert('error');
+                    }
+                });
+            }
+
+         
+
+
+
+var setPieChart = function(data, divId){
+     
+
+  //pre process data points, to define indexes groups and set color from palette
+  var groupsPalette = ['#003268', '#0E3119'];
+  var dataPointsCount = data.length;
+  var groupsMap = {};
+  var groupsIndex = 0;
+  var explodedGroupName;
+
+  for (var i = 0; i < dataPointsCount; i++) {
+    var point = data[i];
+    var groupName = point['group'];
+    var group = groupsMap[groupName];
+
+    if (!group) {
+      group = {};
+      group['index'] = groupsIndex;
+      group['sum'] = 0;
+      group['palette'] = anychart.palettes.distinctColors(anychart.color.singleHueProgression(groupsPalette[groupsIndex], dataPointsCount));
+      group['lastPointIndex'] = -1;
+      group['indexes'] = [];
+      groupsMap[groupName] = group;
+      groupsIndex++;
+    }
+    group['lastPointIndex']++;
+    group['sum'] += point['value'];
+    var groupPalette = group['palette'];
+    var lastPointIndex = group['lastPointIndex'];
+    var groupIndexes = group['indexes'];
+    groupIndexes.push(i);
+
+    point['fill'] = groupPalette.itemAt(lastPointIndex);
+    point['stroke'] = groupPalette.itemAt(lastPointIndex);
+  }
+
+  // create pie chart with passed data
+  var chart = anychart.pie(data);
+
+  // set chart title text settings
+  chart.title('')
+    .interactivity('single')
+    //disable chart legend
+    .legend(false)
+    //set chart radius
+    .radius('43%')
+    .labels(false)
+    // create empty area in pie chart
+    .innerRadius('70%');
+
+  createChartLabel(chart, 0, 'right-top', 'bonds');
+  createChartLabel(chart, 1, 'left-top', 'stock');
+
+  // set container id for the chart
+  chart.container(divId);
+  // initiate chart drawing
+  chart.draw();
+
+  chart.listen('pointMouseOver', function(evt) {
+    var pointIndex = evt.pointIndex;
+    var groupName = chart.data().get(pointIndex, 'group');
+    var group = groupsMap[groupName];
+    var groupIndexes = group['indexes'];
+
+    chart.unhover();
+    chart.hover(groupIndexes);
+  });
+
+  chart.listen('pointMouseOut', function() {
+    chart.unhover();
+  });
+
+  function createChartLabel(chart, index, anchor, groupName) {
+    var label = chart.label(index);
+    label.position('center')
+      .anchor(anchor)
+      .offsetY(0)
+      .offsetX(10)
+      .hAlign('center')
+      .useHtml(true)
+      .text('<span style="font-size: 28px; color: ">' +
+        groupsMap[groupName]['sum'] +
+        '</span><br><span style="font-size: 9px; font-weight: bold">' +
+        groupName.toUpperCase() + '</span>');
+
+    label.listen('mouseOver', function() {
+      document.body.style.cursor = 'pointer';
+      var group = groupsMap[groupName];
+      var groupIndexes = group['indexes'];
+
+      chart.unhover();
+      chart.hover(groupIndexes);
+    });
+
+    label.listen('mouseOut', function() {
+      document.body.style.cursor = '';
+      chart.unhover();
+    });
+
+    label.listen('mouseDown', function() {
+      var group = groupsMap[groupName];
+
+      if (explodedGroupName === groupName) {
+        chart.unselect();
+        explodedGroupName = '';
+      } else {
+        var groupIndexes = group['indexes'];
+        explodedGroupName = groupName;
+        chart.select(false);
+        chart.select(groupIndexes, true);
+      }
+    });
+  }
+}
+
+            var setLineChart = function(data,label,divId){
+
+                var parent = document.getElementById(divId).parentNode;
+                parent.removeChild(document.getElementById(divId));
+                $(parent).append(" <div id="+divId+" style='width:100%; height:300px;'></div>");
+                
+                var format = "EEEE, dd MMM yyyy";
+                var locale = "en-us";
+                
+                var timeZoneOffset = new Date().getTimezoneOffset();
+
+                anychart.format.outputLocale(locale);
+                anychart.format.outputDateTimeFormat(format);
+
+  var dataSet = anychart.data.set(data);
+ var view = dataSet.mapAs();
+  // map data for the first series, take x from the zero column and value from the first column of data set
+  var seriesData_1 = dataSet.mapAs({
+    'x': 0,
+    'value': 1
+  });
+
+  // map data for the second series, take x from the zero column and value from the second column of data set
+  var seriesData_2 = dataSet.mapAs({
+    'x': 0,
+    'value': 2
+  });
+
+  // map data for the third series, take x from the zero column and value from the third column of data set
+  var seriesData_3 = dataSet.mapAs({
+    'x': 0,
+    'value': 3
+  });
+
+    var sortedView = view.sort('x', function(x1, x2){
+        return x1 > x2;
+    });
+  // create line chart
+  var chart = anychart.line(sortedView);
+
+  // turn on chart animation
+  chart.animation(true);
+
+  // set chart padding
+  chart.padding([10, 20, 5, 20]);
+
+  // turn on the crosshair
+  chart.crosshair()
+    .enabled(true)
+    .yLabel(false)
+    .yStroke(null);
+
+  // set tooltip mode to point
+  chart.tooltip().positionMode('point');
+
+  // set chart title text settings
+//   chart.title('Trend of Soil Moisture');
+
+  // set yAxis title
+//   chart.yAxis().title('Soil Moisture Values');
+//   chart.xAxis().labels().padding(5);
+
+  // create first series with mapped data
+  var series_1 = chart.line(seriesData_1);
+  series_1.name(label);
+  series_1.hovered().markers()
+    .enabled(true)
+    .type('circle')
+    .size(4);
+  series_1.tooltip()
+    .position('right')
+    .anchor('left-center')
+    .offsetX(5)
+    .offsetY(5);
+
+  // create second series with mapped data
+  var series_2 = chart.line(seriesData_2);
+  series_2.name('Whiskey');
+  series_2.hovered().markers()
+    .enabled(true)
+    .type('circle')
+    .size(4);
+  series_2.tooltip()
+    .position('right')
+    .anchor('left-center')
+    .offsetX(5)
+    .offsetY(5);
+
+  // create third series with mapped data
+  var series_3 = chart.line(seriesData_3);
+  series_3.name('Tequila');
+  series_3.hovered().markers()
+    .enabled(true)
+    .type('circle')
+    .size(4);
+  series_3.tooltip()
+    .position('right')
+    .anchor('left-center')
+    .offsetX(5)
+    .offsetY(5);
+
+    chart.xAxis().labels().format(function(){
+        return anychart.format.dateTime(this.value, 'dd/MM/yyyy', timeZoneOffset, locale);
+    });
+
+  // turn the legend on
+//   chart.legend()
+//     .enabled(true)
+//     .fontSize(13)
+//     .padding([0, 0, 10, 0]);
+
+  // set container id for the chart
+  chart.container(divId);
+  // initiate chart drawing
+  chart.draw();
+
+  return chart;
+};
+
+var initalizePage = function(){
+    //$('.dropdown-menu li a').first().trigger('click');
+    $("input[id=from_date_sm]").val(
+        '01/01/2018');
+    $("input[id=to_date_sm]").val('31/12/2018');
+    $("input[id=from_date_tmp]").val('01/01/2018');
+    $("input[id=to_date_tmp]").val('31/12/2018');
+    $("input[id=from_date_hm]").val('01/01/2018');
+    $("input[id=to_date_hm]").val('31/12/2018');
+    $("input[id=from_date_ltg]").val('01/01/2018');
+    $("input[id=to_date_ltg]").val('31/12/2018');
+    
+    $( "input[id=from_date_sm]" ).change(function() {
+        updateSoilMoisture();
+    });
+    $( "input[id=to_date_sm]" ).change(function() {
+        updateSoilMoisture();
+    });
+
+     $( "input[id=from_date_tmp]" ).change(function() {
+        updateTemperature();
+    });
+    $( "input[id=to_date_tmp]" ).change(function() {
+        updateTemperature();
+    });
+
+     $( "input[id=from_date_hm]" ).change(function() {
+        updateHumidity();
+    });
+    $( "input[id=to_date_hm]" ).change(function() {
+        updateHumidity();
+    });
+
+     $( "input[id=from_date_ltg]" ).change(function() {
+        updateLight();
+    });
+    $( "input[id=to_date_ltg]" ).change(function() {
+        updateLight();
+    });
+
+}
+
+            initalizePage();
+            setPieChart(randomizePie(),'soilMoisturePie');
+            setPieChart(randomizePie(),'temperaturePie');
+            setPieChart(randomizePie(),"lightPie");
+            setPieChart(randomizePie(),"humidityPie");
+            soilMoistureLineChart = setLineChart(randomizeLine(),'','soilMoistureLine');
+            temperatureLineChart = setLineChart(randomizeLine(),'','temperatureLine');
+            lightLineChart = setLineChart(randomizeLine(),'','lightLine');
+            humidityLineChart = setLineChart(randomizeLine(),'','humidityLine');
+            
+        };
+        
+        
+    </script>
+
+
